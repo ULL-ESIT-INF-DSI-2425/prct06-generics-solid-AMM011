@@ -2,7 +2,7 @@ import { Streamable } from "./Streamable";
 
 export abstract class BasicStreamableCollection<T> implements Streamable<T> {
     /**
-     * @param items - Array of items
+     * Protected array that stores the elements in the collection
      */
     protected items: T[];
 
@@ -10,7 +10,7 @@ export abstract class BasicStreamableCollection<T> implements Streamable<T> {
      * Constructor of the class
      * @param items - Array of items
      */
-    constructor(items: T[]) {
+    constructor(items: T[] = []) {
         this.items = items;
     }
 
@@ -27,7 +27,7 @@ export abstract class BasicStreamableCollection<T> implements Streamable<T> {
      * @param item - Element to remove
      */
     removeItem(item: T): void {
-        this.items = this.items.filter((i) => i !== item);
+        this.items = this.items.filter((i) => JSON.stringify(i) !== JSON.stringify(item));
     }
 
     /**
@@ -51,18 +51,4 @@ export abstract class BasicStreamableCollection<T> implements Streamable<T> {
      * @return An array of items that match the year
      */
     abstract searchByYear(year: number): T[];
-
-    /**
-     * Abstract method to search items by genre
-     * @param genre - The genre to search for
-     * @return An array of items that match the genre
-     */
-    abstract searchByGenre(genre: string): T[];
-
-    /**
-     * Abstract method to search items by director
-     * @param director - The director to seach for
-     * @return An array of items that match the director
-     */
-    abstract searchByDirector(director: string): T[];
 }

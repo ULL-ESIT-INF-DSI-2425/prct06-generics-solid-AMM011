@@ -9,24 +9,13 @@ export interface Searchable<T> {
      * @return - Array of movies or series or documentary that match the name
      */
     searchByName(name: string): T[];
+
     /**
      * Search by year 
      * @param year - Year of thbe movie or serie or documentary
      * @ return - Array of movies or series or documentary that match the year
      */
     searchByYear(year: number): T[];
-    /**
-     * Search by genre
-     * @param genre - Genre of the movie or serie or documentary
-     * @return - Array of movies or series or documentary that match the genre
-     */
-    searchByGenre(genre: string): T[];
-    /**
-     * Search by director
-     * @param director - Director of the movie or serie or documentary
-     * @return - Array of movies or series or documentary that match the director
-     */
-    searchByDirector(director: string): T[];
 }
 
 /**
