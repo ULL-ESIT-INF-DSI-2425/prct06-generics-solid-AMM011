@@ -33,7 +33,7 @@ export class DocumentariesCollection extends BasicStreamableCollection<Documenta
      * @param topic - Topic of the movie or serie or documentary
      * @returns Array of movies or series or documentary that match the topic
      */
-    seachByTopic(topic: string): Documentary[] {
+    searchByTopic(topic: string): Documentary[] {
         return this.items.filter((item) => item.topic.toLowerCase().includes(topic.toLowerCase()));
     }
 
