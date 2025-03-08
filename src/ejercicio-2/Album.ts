@@ -28,7 +28,7 @@ export class Album implements IAlbum {
      * Constructor de la clase Album, para crear un objeto como si fuera un disco.
      * 
      * @param name - Nombre del album
-     * @param release - Numero de oyentes
+     * @param release - Año de lanzamiento
      * @param songs - Lista de canciones
      */
     constructor(public name: string, public release: number, public songs: Song[]) {

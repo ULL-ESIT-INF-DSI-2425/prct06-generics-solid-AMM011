@@ -1,161 +1,149 @@
 import { Song } from "./Song";
 import { Album } from "./Album";
 import { Artist } from "./Artist";
+import { Discography } from "./Discography";
+import { Single } from "./Single";
 
 /**
- * Clase que representa una librería de música
+ * Clase que representa una librería de música genérica.
  * @module
  * @class MusicLibrary
+ * @template T Tipo de la discografía (Álbum, Single o ambos).
  * @example
- * const library: MusicLibrary = new MusicLibrary([artist]);
+ * const library = new MusicLibrary<Album | Single>([artist1, artist2]);
  */
-export class MusicLibrary {
+export class MusicLibrary<T extends Album | Single> {
     /**
-     * Librería que contiene diferentes artistas con sus diferentes datos.
+     * Librería que contiene diferentes artistas con sus discografías.
      */
-    private library: Artist[];
+    private library: Artist<T>[];
 
     /**
-     * @param library - Artista principal de la biblioteca musical
+     * Constructor de la clase MusicLibrary.
+     * @param library - Lista de artistas en la biblioteca musical.
      */
-    constructor(library: Artist[]) {
+    constructor(library: Artist<T>[]) {
         this.library = library;
     }
 
-    get getLibrary(): Artist[] {
-        return this.library;
+    /**
+     * Devuelve la lista de artistas en la biblioteca.
+     * @returns {Artist<T>[]} - Lista de artistas.
+     */
+    get getLibrary(): Artist<T>[] {
+        return this.library.slice();
     }
 
     /**
-     * Método para agregar un artista a la librería
-     * 
-     * @param artist - Artista a agregar
+     * Agrega un nuevo artista a la biblioteca.
+     * @param artist - Artista a agregar.
      */
-    addArtist(artist: Artist): void {
-        this.getLibrary.push(artist);
+    addArtist(artist: Artist<T>): void {
+        this.library.push(artist);
     }
 
     /**
-     * 
-     * Método que busca un artista por el nombre
-     * 
-     * @param name - Nombre del artista que se busca
-     * @returns - El artista o undefined si no se encontro
+     * Busca un artista por su nombre.
+     * @param name - Nombre del artista a buscar.
+     * @returns {Artist<T> | undefined} - Artista encontrado o undefined si no existe.
      */
-    findArtist(name: string): Artist | undefined {
-        return this.getLibrary.find((a) => a.getNameArtist === name);
+    findArtist(name: string): Artist<T> | undefined {
+        return this.library.find((a) => a.getNameArtist === name);
     }
 
     /**
-     * 
-     * Método que busca un albúm por el nombre
-     * 
-     * @param album - Album a buscar
-     * @returns - Album encontrado o undefined si no se encontro
+     * Busca un álbum por su nombre.
+     * @param name - Nombre del álbum a buscar.
+     * @returns {Album | undefined} - Álbum encontrado o undefined si no existe.
      */
-    findAlbum(album: string): Album | undefined {
-        const library: Artist[] = this.getLibrary;
-        let albums: Album[] = [];
-
-        library.forEach((artist) => {
-            albums = albums.concat(artist.getAlbumsArtist);
-        });
-
-        return albums.find((a) => a.getNameAlbum === album);
-    }
-
-    /**
-     * 
-     * Método que busca una canción por el nombre
-     * 
-     * @param song - Canción a buscar
-     * @returns - Canción encontrada o undefined si no se encontro
-     */
-    findSong(song: string): Song | undefined {
-        const library: Artist[] = this.getLibrary;
-        let albums: Album[] = [];
-
-        library.forEach((artist) => {
-            albums = albums.concat(artist.getAlbumsArtist);
-        });
-
-        for (const album of albums) {
-            const foundSong = album.getSongsAlbum.find((s) => s.getNameSong === song);
-            if (foundSong) {
-                return foundSong;
-            }
+    findAlbum(name: string): Album | undefined {
+        for (const artist of this.library) {
+            const found = artist.discography.getAllItems().find(
+                (item) => item instanceof Album && item.name.toLowerCase() === name.toLowerCase()
+            );
+            if (found) return found as Album;
         }
-
         return undefined;
     }
 
     /**
-     * Muestra la consola la información de la biblioteca en formato tabl
+     * Busca una canción por su nombre.
+     * @param name - Nombre de la canción a buscar.
+     * @returns {Song | undefined} - Canción encontrada o undefined si no existe.
      */
-    displayLibrary(): void {
-        console.table(this.getLibrary);
+    findSong(name: string): Song | undefined {
+        for (const artist of this.library) {
+            for (const item of artist.discography.getAllItems()) {
+                if (item instanceof Album) {
+                    const songFound = item.songs.find((s) => s.getNameSong === name);
+                    if (songFound) return songFound;
+                } else if (item instanceof Single) {
+                    const songs = Array.isArray(item.song) ? item.song : [item.song];
+                    const songFound = songs.find((s) => s.getNameSong === name);
+                    if (songFound) return songFound;
+                }
+            }
+        }
+        return undefined;
     }
 
     /**
-     * Método para obtener el número de canciones de un albúm
-     * 
-     * @returns - Devuelve el número de canciones 
+     * Obtiene el número total de canciones en la biblioteca.
+     * @returns {number} - Total de canciones.
      */
-    getSongs(): number {
-        const library = this.getLibrary;
-        let albums: Album[] = [];
-        library.forEach((artist) => {
-            albums = albums.concat(artist.getAlbumsArtist);
+    getTotalSongs(): number {
+        const uniqueItems = new Set();
+        this.library.forEach(artist => {
+          artist.discography.getAllItems().forEach(item => uniqueItems.add(item));
         });
-
-        let count: number = 0;
-        albums.forEach((album) => {
-            count += album.getSongCount();
+        let totalSongs = 0;
+        uniqueItems.forEach(item => {
+          if (item instanceof Album) {
+            totalSongs += item.getSongCount();
+          } else if (item instanceof Single) {
+            totalSongs += Array.isArray(item.song) ? item.song.length : 1;
+          }
         });
-
-        return count;
+        return totalSongs;
     }
 
     /**
-     * 
-     * Método que obtiene la duración de un disco, a partir de la duración de todas y cada una de las canciones que lo conforman.
-     * 
-     * @returns - Devuelve la duración total de las canciones.
+     * Obtiene la duración total de todas las canciones en la biblioteca.
+     * @returns {number} - Duración total en minutos.
      */
-    getDuration(): number {
-        const library = this.getLibrary;
-        let albums: Album[] = [];
-        library.forEach((artist) => {
-            albums = albums.concat(artist.getAlbumsArtist);
+    getTotalDuration(): number {
+        const uniqueItems = new Set();
+        this.library.forEach(artist => {
+          artist.discography.getAllItems().forEach(item => uniqueItems.add(item));
         });
-
-        let duration: number = 0;
-        albums.forEach((album) => {
-            duration += album.getDuration();
+        let totalDuration = 0;
+        uniqueItems.forEach(item => {
+          if (item instanceof Album) {
+            totalDuration += item.getDuration();
+          } else if (item instanceof Single) {
+            totalDuration += item.getDuration();
+          }
         });
-
-        return duration;
+        return totalDuration;
     }
 
     /**
-     * 
-     * Método que obtiene el número total de reproducciones de un disco, a partir del número de reproducciones de todas y
-     * cada una de las canciones incluidas en el mismo.
-     * 
-     * @returns - Devuelve el número total de reproduciones.
+     * Obtiene el número total de reproducciones de todas las canciones en la biblioteca.
+     * @returns {number} - Total de reproducciones.
      */
     getTotalPlays(): number {
-        const library = this.getLibrary;
-        let albums: Album[] = [];
-        library.forEach((artist) => {
-            albums = albums.concat(artist.getAlbumsArtist);
+        const uniqueItems = new Set();
+        this.library.forEach(artist => {
+          artist.discography.getAllItems().forEach(item => uniqueItems.add(item));
         });
-
-        let plays: number = 0;
-        albums.forEach((album) => {
-            plays += album.getTotalPlays();
+        let totalPlays = 0;
+        uniqueItems.forEach(item => {
+          if (item instanceof Album) {
+            totalPlays += item.getTotalPlays();
+          } else if (item instanceof Single) {
+            totalPlays += item.getTotalPlays();
+          }
         });
-
-        return plays;
+        return totalPlays;
     }
 }
