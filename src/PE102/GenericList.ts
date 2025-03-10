@@ -75,5 +75,19 @@ export class GenericList<T> {
         }
         return mappedList;
     }
+
+    /**
+     * Reduce los elementos de la lista a un único valor utilizando una función acumuladora.
+     * @param fn Función de reducción.
+     * @param initial Valor inicial del acumulador.
+     * @returns El valor acumulado tras aplicar la reducción.
+     */
+    reduce(fn: (acc: T, item: T) => T, initial: T): T {
+        let accumulator = initial;
+        for (let i = 0; i < this.length(); i++) {
+            accumulator = fn(accumulator, this.items[i]);
+        }
+        return accumulator;
+    }
   }
   

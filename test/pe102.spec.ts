@@ -61,7 +61,18 @@ describe('GenericList Test', () => {
         const stringMapped = stringList.map(s => s.toUpperCase());
         expect(stringMapped.length()).toBe(3);
     
-        const booleanMapped = numberList.map(n => n > 3);
+        const booleanMapped = numberList.map(n => n + 2);
         expect(booleanMapped.length()).toBe(5);
+      });
+
+      test('debería reducir la lista a un único valor', () => {
+        const sum = numberList.reduce((acc, val) => acc + val, 0);
+        expect(sum).toBe(15);
+    
+        const product = numberList.reduce((acc, val) => acc * val, 1);
+        expect(product).toBe(120);
+    
+        const stringConcat = stringList.reduce((acc, val) => acc + val, '');
+        expect(stringConcat).toBe('abc');
       });
 })
