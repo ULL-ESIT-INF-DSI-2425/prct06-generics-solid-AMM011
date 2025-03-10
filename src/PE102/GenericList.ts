@@ -65,17 +65,15 @@ export class GenericList<T> {
 
     /**
      * Aplica una función a cada elemento de la lista y retorna una nueva lista con los valores transformados.
-     * Los elementos de Tipo T se tranforman a elementos de Tipo U.
      * @param fn - Función de transformación.
      * @returns Una nueva lista con los elementos transformados.
      */
-    map<U>(fn: (item: T) => U): GenericList<U> {
+    map(fn: (item: T) => T): GenericList<T> {
         const mappedList = new GenericList<U>();
         for (let i = 0; i < this.length(); i++) {
             mappedList.items[mappedList.length()] = fn(this.items[i]);
         }
         return mappedList;
     }
-
   }
   
