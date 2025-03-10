@@ -24,9 +24,7 @@ export class GenericList<T> {
     length(): number {
         let count = 0;
         for (let i in this.items) {
-            if (this.items.hasOwnProperty(i)) {
-                count++;
-            }
+            count++;
         }
         return count;
     }
