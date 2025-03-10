@@ -69,7 +69,7 @@ export class GenericList<T> {
      * @returns Una nueva lista con los elementos transformados.
      */
     map(fn: (item: T) => T): GenericList<T> {
-        const mappedList = new GenericList<U>();
+        const mappedList = new GenericList<T>();
         for (let i = 0; i < this.length(); i++) {
             mappedList.items[mappedList.length()] = fn(this.items[i]);
         }
