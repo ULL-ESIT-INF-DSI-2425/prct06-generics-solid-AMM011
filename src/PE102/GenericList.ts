@@ -22,7 +22,13 @@ export class GenericList<T> {
      * @returns Número de elementos en la lista.
      */
     length(): number {
-      return this.items.length;
+        let count = 0;
+        for (let i in this.items) {
+            if (this.items.hasOwnProperty(i)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -71,6 +77,7 @@ export class GenericList<T> {
     map(fn: (item: T) => T): GenericList<T> {
         const mappedList = new GenericList<T>();
         for (let i = 0; i < this.length(); i++) {
+            // Aplicamos la función a cada elemento y el resultado se almacena en la nueva lista.
             mappedList.items[mappedList.length()] = fn(this.items[i]);
         }
         return mappedList;
@@ -85,6 +92,7 @@ export class GenericList<T> {
     reduce(fn: (acc: T, item: T) => T, initial: T): T {
         let accumulator = initial;
         for (let i = 0; i < this.length(); i++) {
+            // Aplicmaos la función acumuladoar a cada elemento de la lista y lo guardamos en la variable acumuladora.
             accumulator = fn(accumulator, this.items[i]);
         }
         return accumulator;
