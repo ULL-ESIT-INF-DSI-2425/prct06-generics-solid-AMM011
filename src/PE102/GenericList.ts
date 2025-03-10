@@ -95,5 +95,27 @@ export class GenericList<T> {
         }
         return accumulator;
     }
+
+    /**
+     * Retorna una nueva lista con los elementos en orden inverso.
+     * @returns Una nueva lista con los elementos en orden inverso.
+     */
+    reverse(): GenericList<T> {
+        const reversedList = new GenericList<T>();
+        for (let i = this.length() - 1; i >= 0; i--) {
+            reversedList.items[reversedList.length()] = this.items[i];
+        }
+        return reversedList;
+    }
+
+    /**
+     * Itera sobre cada elemento de la lista y ejecuta la función proporcionada.
+     * @param fn Función que se ejecutará para cada elemento de la lista.
+     */
+    forEach(fn: (item: T) => void): void {
+        for (let i = 0; i < this.length(); i++) {
+            fn(this.items[i]);
+        }
+    }
   }
   

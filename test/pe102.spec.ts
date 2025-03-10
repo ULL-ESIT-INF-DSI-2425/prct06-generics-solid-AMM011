@@ -75,4 +75,22 @@ describe('GenericList Test', () => {
         const stringConcat = stringList.reduce((acc, val) => acc + val, '');
         expect(stringConcat).toBe('abc');
       });
+
+      test('debería revertir los elementos de la lista', () => {
+        const reversedString = stringList.reverse();
+        expect(reversedString.reduce((acc, val) => acc + val, '')).toBe('cba');
+    
+        const reversedEmpty = new GenericList<number>().reverse();
+        expect(reversedEmpty.length()).toBe(0);
+      });
+
+      test('debería ejecutar una función en cada elemento con forEach', () => {
+        let count = 0;
+        numberList.forEach(() => count++);
+        expect(count).toBe(5);
+    
+        let stringConcat = '';
+        stringList.forEach(s => (stringConcat += s));
+        expect(stringConcat).toBe('abc');
+      });
 })
