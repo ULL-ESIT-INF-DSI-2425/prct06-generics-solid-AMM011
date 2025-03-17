@@ -1,48 +1,49 @@
-import { Observer } from './Observer';
+// src/models/WeatherStation.ts
+import { Observable } from "./Observable.js";
+import { Observer } from "./Observer.js";
 
 /**
- * Clase que representa una estación meteorológica que notifica eventos a sus observadores.
+ * Clase que implementa la interfaz Observable.
+ * Representa una estación meteorológica que notifica a sus observadores cada vez que cambia la información del clima.
  */
-export class WeatherStation {
-    private observers: Observer[] = [];
-    private temperature: number = 0;
+export class WeatherStation implements Observable {
+  private observers: Observer[] = [];
+  
+  /**
+   * Propiedad que almacena la información meteorológica actual.
+   */
+  public weatherData: any;
 
-    /**
-     * Agrega un observador a la lista de notificaciones.
-     */
-    addObserver(observer: Observer): void {
-        this.observers.push(observer);
-    }
+  /**
+   * Registra un observador.
+   * @param observer - Observador a registrar.
+   */
+  attach(observer: Observer): void {
+    this.observers.push(observer);
+  }
 
-    /**
-     * Elimina un observador de la lista de notificaciones.
-     * @param observer - Observador a eliminar.
-     */
-    removeObserver(observer: Observer): void {
-        this.observers = this.observers.filter(obs => obs !== observer);
-    }
+  /**
+   * Elimina un observador.
+   * @param observer - Observador a eliminar.
+   */
+  detach(observer: Observer): void {
+    this.observers = this.observers.filter(obs => obs !== observer);
+  }
 
-    /**
-     * Notifica a todos los observadores con un mensaje de actualización.
-     */
-    notifyObserver(message: string): void{
-        this.observers.forEach(observer => observer.update(message));
-    }
+  /**
+   * Notifica a todos los observadores llamando a su método update y pasando la información actual.
+   */
+  notify(): void {
+    this.observers.forEach(observer => observer.update(this));
+  }
 
-    /**
-     * Cambia la temperatura y notifica a los observadores.
-     * @param newTemparature - Nueva temperatura.
-     */
-    setTemperature(newTemparature: number): void {
-        this.temperature = newTemparature;
-        this.notifyObserver(`Nueva temperatura: ${newTemparature} C`);
-    }
-
-    /**
-     * Simula un evento meteorológico y notifica a los observadores
-     * @param event - Descripción del evento.
-     */
-    triggerWeatherEvent(event: string): void {
-        this.notifyObserver(`Evento meteorológico: ${event}`);
-    }
+  /**
+   * Actualiza la información meteorológica y notifica a los observadores.
+   * @param newData - Nueva información meteorológica.
+   */
+  public updateWeather(newData: any): void {
+    this.weatherData = newData;
+    console.log(`WeatherStation: Actualizando datos meteorológicos -> ${JSON.stringify(this.weatherData)}`);
+    this.notify();
+  }
 }
