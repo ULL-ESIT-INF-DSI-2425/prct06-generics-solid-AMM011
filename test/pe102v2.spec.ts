@@ -21,7 +21,7 @@ describe('Pruebas del patrón Observer', () => {
       const weatherData = { temperatura: '30°C' };
   
       weatherStation.updateWeather(weatherData);
-  
+      // Contiene todas las llamadas de consoleSpy
       const calls = consoleSpy.mock.calls;
       // Primera llamada: WeatherStation
       expect(calls[0][0]).toBe(
